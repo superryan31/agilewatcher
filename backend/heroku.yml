@@ -1,0 +1,13 @@
+
+build:
+  config: 
+    RAILS_ENV: production
+  docker:
+    web: Dockerfile
+run:
+  web: bundle exec puma -C config/puma.rb
+release:
+  image: web
+  command:
+    - bin/rails db:migrate &&
+      bin/rails db:seed
