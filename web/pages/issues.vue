@@ -27,7 +27,8 @@
                             <v-col md="4" v-for="(assignee, index) in assignees" :key="index">
                                 <v-avatar
                                         tile
-                                        size="60">
+                                        size="60"
+                                        class="mb-3">
                                     <img v-if="assignee.login != 'No One Assign'" :src="assignee.avatar_url"
                                          alt="avatar">
                                     <img v-if="assignee.login == 'No One Assign'" src="@/assets/no-assignee.jpg"
@@ -37,26 +38,33 @@
                                 {{assignee.login}}
                                 <v-row>
                                     <v-col v-for="(issue, ind) in assignee.issueList"
-                                           :key="ind" md="12">
+                                           :key="ind" md="12" class="mt-n5">
                                         <v-card
                                                 class="mx-auto"
                                                 outlined>
 
-                                            <v-list-item>
+                                            <v-list-item class="ma-n1">
                                                 <v-list-item-content>
-                                                    <v-list-item-title> {{prepareTitle(issue.title)}}
+                                                    <v-list-item-title>
+                                                        {{prepareTitle(issue.title)}}
                                                     </v-list-item-title>
-                                                </v-list-item-content>
-                                                <v-avatar color="primary" class="ml-1 mb-1" size="23"
-                                                          v-if="getPointFromTitle(issue.title) != 0">
-                                                    <span class="caption white--text">{{getPointFromTitle(issue.title)}}</span>
-                                                </v-avatar>
-                                            </v-list-item>
+                                                    <div>
+                                                        <v-chip v-for="(label, labelInd) in issue.labels"
+                                                                :key="labelInd" x-small
+                                                                :color="'#' + label.color"
+                                                                v-bind:class="label.labelClass">
+                                                            {{label.name}}
+                                                        </v-chip>
+                                                    </div>
+                                                     </v-list-item-content>
 
-                                            <v-chip v-for="(label, labelInd) in issue.labels" :key="labelInd" x-small
-                                                    :color="'#' + label.color" v-bind:class="label.labelClass">
-                                                {{label.name}}
-                                            </v-chip>
+                                                <v-list-item-action>
+                                                    <v-avatar color="primary" class="ml-1 mb-1" size="23"
+                                                              v-if="getPointFromTitle(issue.title) != 0">
+                                                        <span class="caption white--text">{{getPointFromTitle(issue.title)}}</span>
+                                                    </v-avatar>
+                                                </v-list-item-action>
+                                            </v-list-item>
 
                                         </v-card>
                                     </v-col>
@@ -92,8 +100,8 @@
       setAssigneeAndIssue(tempAssignee, issue) {
         // prepare label color
         for (let label of issue.labels) {
-          label.labelClass = 'ma-1'
-          if (label.name == 'bug' || label.name == 'documentation' || label.name == "good first issue" || label.name == "help wanted") {
+          label.labelClass = 'mr-1 mt-1'
+          if (label.name == 'bug' || label.name == 'documentation' || label.name == 'good first issue' || label.name == 'help wanted') {
             label.labelClass += ' white--text'
           }
         }
