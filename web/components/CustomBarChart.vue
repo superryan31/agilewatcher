@@ -5,7 +5,7 @@
     data () {
       return {
         datacollection: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+          labels: this.labels,
           datasets: [
             {
               label: 'Data One',
@@ -13,7 +13,7 @@
               pointBackgroundColor: 'white',
               borderWidth: 1,
               pointBorderColor: '#249EBF',
-              data: [40, 20, 30, 50, 90, 10, 20, 40, 50, 70, 90, 100]
+              data: this.pointData
             }
           ]
         },
@@ -40,6 +40,20 @@
           maintainAspectRatio: false
         }
       }
+    },
+    props:{
+      labels:{
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      pointData: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
     },
     mounted () {
       this.renderChart(this.datacollection, this.options)
