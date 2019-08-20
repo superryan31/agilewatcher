@@ -15,7 +15,32 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col md="8">
+            <v-col md="8" class="text-center mt-10" v-if="showLoading">
+                <v-row></v-row>
+                <v-row style="height: 150px;"
+                       align-content="center"
+                       justify="center">
+                    <v-col md="12">
+                        <div class="subtitle-1 text-center">
+                            Getting Chart Data
+                        </div>
+                    </v-col>
+
+                    <v-col md="6" align-self="center">
+                        <v-progress-linear
+                                color="#fb8c00"
+                                indeterminate
+                                rounded
+                                height="6"
+                        ></v-progress-linear>
+                    </v-col>
+
+                </v-row>
+
+            </v-col>
+
+
+            <v-col md="8" v-if="!showLoading">
                 <h3>累積消化ポイント</h3>
                 <custom-bar-chart v-if="isFinishedApiCall" :point-data="pointData" :labels="labels"></custom-bar-chart>
             </v-col>
@@ -41,11 +66,13 @@
         datacollection: null,
         repository_create_date: null,
         labels: [],
+        showLoading: false,
         pointData: [],
         github_repository: this.$store.getters.github_repository
       }
     },
     created() {
+      console.log(this.$store.getters.github_token)
       this.getRepository()
     },
     methods: {
@@ -104,6 +131,8 @@
         this.isFinishedApiCall = true
       },
       getRepository() {
+        console.log('here')
+        this.showLoading = true;
         githubService.getRepository(this.github_repository)
           .then(response => {
             this.repository_create_date = response.data.created_at;
@@ -115,6 +144,7 @@
           .then(response => {
             let issueList = response.data.items
             this.fillData(issueList)
+            this.showLoading = false;
           })
       },
       getPointFromTitle(title) {

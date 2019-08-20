@@ -8,7 +8,7 @@
           labels: this.labels,
           datasets: [
             {
-              label: 'Data One',
+              label: 'Issue Data',
               backgroundColor: '#fb8c00',
               pointBackgroundColor: 'white',
               borderWidth: 1,
