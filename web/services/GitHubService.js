@@ -24,9 +24,8 @@ function getIssues(repo_name, timer) {
   let url = '/search/issues?q=repo:' + repo_name + '+state:closed+type:issue'
   if (timer == 'one_month') {
     url += '+closed:>=' + dateStr
-  } else if(timer == 'so_far'){
-    url += '+closed:<' + dateStr
   }
+
   // show only close issue
   return github_axios.get(url)
 }

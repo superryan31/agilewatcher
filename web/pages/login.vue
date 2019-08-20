@@ -68,14 +68,14 @@
       }
     }),
     methods: {
-      async login() {
+      login() {
         if (!this.$refs.form.validate()) {
           return
         }
         this.loading = true
         this.$store.dispatch('login', { user: this.user })
           .then(() => {
-            this.$router.push('/')
+
           })
           .catch(err => {
             if (err.response.data.error) {
@@ -91,6 +91,7 @@
                 if (res.data) {
                   this.setting = res.data;
                   this.$store.dispatch('saveGitHubInfo', this.setting)
+                  this.$router.push('/')
                 }
               })
               .catch(err => {

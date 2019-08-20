@@ -1,6 +1,13 @@
 <template>
     <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="save()">
         <v-layout align-center justify-center class="mt-5">
+            <v-progress-linear
+                    :active="showProgressLoading"
+                    :indeterminate="showProgressLoading"
+                    absolute
+                    top
+                    color="primary"
+            ></v-progress-linear>
 
             <v-flex xs12 sm8 md6 lg4>
                 <v-card class="elevation-1 pa-3">
@@ -72,6 +79,7 @@
     name: 'setting',
     data: () => ({
       loading: false,
+      showProgressLoading: true,
       responseError: '',
       setting: {
         github_token: '',
@@ -98,6 +106,7 @@
           })
       },
       getExistingSetting(){
+        this.showProgressLoading = true
         this.$axios.get('user-project-setting').then(
           res => {
             console.log(res);
@@ -105,6 +114,7 @@
               this.setting = res.data;
               this.$store.dispatch('saveGitHubInfo', this.setting)
             }
+            this.showProgressLoading = false
           })
           .catch(err => {
             console.log(err);

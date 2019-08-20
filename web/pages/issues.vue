@@ -1,5 +1,12 @@
 <template>
     <v-layout class="mt-5">
+        <v-progress-linear
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                top
+                color="primary"
+        ></v-progress-linear>
         <v-flex>
             <template>
                 <v-tabs grow color="primary">
@@ -20,32 +27,46 @@
                             <v-col md="4" v-for="(assignee, index) in assignees" :key="index">
                                 <v-avatar
                                         tile
-                                        size="60">
-                                    <img v-if="assignee.login != 'No One Assign'" :src="assignee.avatar_url" alt="avatar">
-                                    <img v-if="assignee.login == 'No One Assign'" src="@/assets/no-assignee.jpg" alt="avatar">
+                                        size="60"
+                                        class="mb-3">
+                                    <img v-if="assignee.login != 'No One Assign'" :src="assignee.avatar_url"
+                                         alt="avatar">
+                                    <img v-if="assignee.login == 'No One Assign'" src="@/assets/no-assignee.jpg"
+                                         alt="avatar">
 
                                 </v-avatar>
                                 {{assignee.login}}
                                 <v-row>
                                     <v-col v-for="(issue, ind) in assignee.issueList"
-                                           :key="ind">
+                                           :key="ind" md="12" class="mt-n5">
                                         <v-card
-                                                class="mx-auto"
-                                                outlined>
+                                                class="mx-auto "
+                                                outlined
+                                                min-height = "60px"
+                                        >
 
-                                            <v-list-item>
-                                                <v-list-item-content>
-                                                    <v-list-item-title> {{prepareTitle(issue.title)}}</v-list-item-title>
-                                                </v-list-item-content>
-                                                <v-avatar color="primary" class="ml-1 mb-1" size="20" v-if="getPointFromTitle(issue.title) != 0">
-                                                    <span class="caption">{{getPointFromTitle(issue.title)}}</span>
-                                                </v-avatar>
+                                            <v-list-item class="ma-n1">
+                                                <v-list-item-content v-bind:class="issue.labels.length > 0 ? '':'mt-3'">
+                                                    <v-list-item-title>
+                                                        {{prepareTitle(issue.title)}}
+                                                    </v-list-item-title>
+                                                    <div>
+                                                        <v-chip v-for="(label, labelInd) in issue.labels"
+                                                                :key="labelInd" x-small
+                                                                :color="'#' + label.color"
+                                                                v-bind:class="label.labelClass">
+                                                            {{label.name}}
+                                                        </v-chip>
+                                                    </div>
+                                                     </v-list-item-content>
+
+                                                <v-list-item-action v-bind:class="issue.labels.length > 0 ? '':'mt-5'">
+                                                    <v-avatar color="primary" class="ml-1 mb-1" size="23"
+                                                              v-if="getPointFromTitle(issue.title) != 0">
+                                                        <span class="caption white--text">{{getPointFromTitle(issue.title)}}</span>
+                                                    </v-avatar>
+                                                </v-list-item-action>
                                             </v-list-item>
-
-                                            <v-chip v-for="(label, labelInd) in issue.labels" :key="labelInd" x-small
-                                                    :color="'#' + label.color" class="ma-1">
-                                                {{label.name}}
-                                            </v-chip>
 
                                         </v-card>
                                     </v-col>
@@ -68,6 +89,7 @@
     middleware: 'local_and_github_auth',
     data() {
       return {
+        loading: true,
         assignees: [],
         github_token: this.$store.getters.github_token,
         github_repository: this.$store.getters.github_repository
@@ -78,6 +100,13 @@
     },
     methods: {
       setAssigneeAndIssue(tempAssignee, issue) {
+        // prepare label color
+        for (let label of issue.labels) {
+          label.labelClass = 'mr-1 mt-1'
+          if (label.name == 'bug' || label.name == 'documentation' || label.name == 'good first issue' || label.name == 'help wanted') {
+            label.labelClass += ' white--text'
+          }
+        }
         let isContain = false
         for (let assignee of this.assignees) {
           if (assignee.login == tempAssignee.login) {
@@ -94,13 +123,14 @@
 
       },
       getIssueList(timer) {
+        this.loading = true
+        this.assignees = []
         githubService.getIssues(this.github_repository, timer)
           .then(response => {
-            this.assignees = [];
             let issueList = response.data.items
             for (let issue of issueList) {
-              if(issue.assignees.length <= 0){
-                let temp = {login:'No One Assign'}
+              if (issue.assignees.length <= 0) {
+                let temp = { login: 'No One Assign' }
                 this.setAssigneeAndIssue(temp, issue)
               }
               // set assignee
@@ -108,29 +138,28 @@
                 this.setAssigneeAndIssue(tempAssignee, issue)
               }
             }
+            this.loading = false
           })
       },
-      prepareTitle(title){
-        let tempList = title.match(/"[0-9]{1,2}"/g);
-        if(tempList != null && tempList.length > 0){
-          let result = title.replace(tempList[tempList.length -1],"")
-          return result;
-        }
-        else{
-          return title;
+      prepareTitle(title) {
+        let tempList = title.match(/"[0-9]{1,2}"/g)
+        if (tempList != null && tempList.length > 0) {
+          let result = title.replace(tempList[tempList.length - 1], '')
+          return result
+        } else {
+          return title
         }
       },
-      getPointFromTitle(title){
-        let tempList = title.match(/"[0-9]{1,2}"/g);
+      getPointFromTitle(title) {
+        let tempList = title.match(/"[0-9]{1,2}"/g)
         console.log(tempList)
-        if(tempList != null && tempList.length > 0){
-          let result = title.replace(tempList[tempList.length -1],"")
-          title = result;
+        if (tempList != null && tempList.length > 0) {
+          let result = title.replace(tempList[tempList.length - 1], '')
+          title = result
           console.log(result)
-          return tempList[tempList.length -1].replace(/["]+/g,""); // get last index
-        }
-        else{
-          return 0;
+          return tempList[tempList.length - 1].replace(/["]+/g, '') // get last index
+        } else {
+          return 0
         }
       }
 
