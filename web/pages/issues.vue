@@ -40,11 +40,13 @@
                                     <v-col v-for="(issue, ind) in assignee.issueList"
                                            :key="ind" md="12" class="mt-n5">
                                         <v-card
-                                                class="mx-auto"
-                                                outlined>
+                                                class="mx-auto "
+                                                outlined
+                                                min-height = "60px"
+                                        >
 
                                             <v-list-item class="ma-n1">
-                                                <v-list-item-content>
+                                                <v-list-item-content v-bind:class="issue.labels.length > 0 ? '':'mt-3'">
                                                     <v-list-item-title>
                                                         {{prepareTitle(issue.title)}}
                                                     </v-list-item-title>
@@ -58,7 +60,7 @@
                                                     </div>
                                                      </v-list-item-content>
 
-                                                <v-list-item-action>
+                                                <v-list-item-action v-bind:class="issue.labels.length > 0 ? '':'mt-5'">
                                                     <v-avatar color="primary" class="ml-1 mb-1" size="23"
                                                               v-if="getPointFromTitle(issue.title) != 0">
                                                         <span class="caption white--text">{{getPointFromTitle(issue.title)}}</span>
