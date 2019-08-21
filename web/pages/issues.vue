@@ -152,11 +152,9 @@
       },
       getPointFromTitle(title) {
         let tempList = title.match(/"[0-9]{1,2}"/g)
-        console.log(tempList)
         if (tempList != null && tempList.length > 0) {
           let result = title.replace(tempList[tempList.length - 1], '')
           title = result
-          console.log(result)
           return tempList[tempList.length - 1].replace(/["]+/g, '') // get last index
         } else {
           return 0
