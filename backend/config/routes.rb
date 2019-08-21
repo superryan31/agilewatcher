@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   devise_for :users, defaults: { format: :json }
   resources :project_setting
   get '/user-project-setting' => 'project_setting#user_project_setting'
+  post '/change_plan' => 'plan_upgrade#change_plan'
 end

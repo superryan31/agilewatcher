@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_08_070048) do
+ActiveRecord::Schema.define(version: 2019_08_21_085040) do
 
   create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "jti", null: false
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2019_08_08_070048) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
-  create_table "project_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "github_token"
     t.string "github_repository"
     t.date "project_start_date"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2019_08_08_070048) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "used_free", default: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
