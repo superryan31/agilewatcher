@@ -4,6 +4,7 @@ export const state = () => ({
   user: {},
 
   used_free: localStorage.getItem('used_free') || true,
+  show_plan_change_alert: false,
   github_token: localStorage.getItem('github_token') || '',
   github_repository: localStorage.getItem('github_repository') || ''
 })
@@ -28,6 +29,10 @@ export const mutations = {
   change_plan_success(state, user) {
     console.log(user)
     state.used_free = user.used_free
+    state.show_plan_change_alert = true
+  },
+  clear_plan_change_alert(state){
+    state.show_plan_change_alert = false
   },
   setting_success(state, setting) {
     console.log(setting)
@@ -60,6 +65,12 @@ export const actions = {
           localStorage.removeItem('token')
           reject(err)
         })
+    })
+  },
+  clearPlanChangeAlert({ commit }) {
+    return new Promise((resolve, reject) => {
+      commit('clear_plan_change_alert')
+      resolve()
     })
   },
   logout({ commit }) {
@@ -130,6 +141,7 @@ export const getters = {
   isLoggedIn: state => !!state.token,
   authStatus: state => state.status,
   used_free: state => !!state.used_free,
+  show_plan_change_alert: state => state.show_plan_change_alert,
 
   isExistGitHubToken: state => !!state.github_token,
   github_token: state => state.github_token,

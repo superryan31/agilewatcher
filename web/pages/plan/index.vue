@@ -58,24 +58,40 @@
         used_free: this.$store.getters.used_free
       }
     },
+    mounted() {
+      this.$store.watch(
+        (state, getters) => {
+          this.used_free = getters.used_free
+          console.log(getters.show_plan_change_alert)
+          if(getters.show_plan_change_alert){
+            this.showAlert()
+          }
+        }
+      )},
     methods: {
       usedFreePlan() {
         this.loading = true
         this.$store.dispatch('changePlan')
           .then(() => {
-            this.showAlertBar = true
-            this.used_free = !this.used_free
           })
           .catch(err => {
-            if (err.response.data.error) {
-              this.responseError = err.response.data.error
-            } else {
-              this.responseError = err.response.data.errors
-            }
+            console.log(err)
           })
           .finally(() => {
             this.loading = false
           })
+      },
+      showAlert(){
+        this.showAlertBar = true
+        let timer = this.showAlert.timer
+        if (timer) {
+          clearTimeout(timer)
+        }
+        this.showAlert.timer = setTimeout(() => {
+          this.showAlertBar = false
+          this.$store.dispatch('clearPlanChangeAlert')
+        }, 3000)
+
       }
     }
   }
