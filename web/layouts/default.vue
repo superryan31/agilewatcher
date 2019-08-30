@@ -101,6 +101,11 @@
             icon: 'mdi-chart-bubble',
             title: 'Issues',
             to: '/issues'
+          },
+          {
+            icon: 'mdi-wallet-membership',
+            title: 'Plan',
+            to: '/plan'
           }
         ],
         miniVariant: false,

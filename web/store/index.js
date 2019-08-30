@@ -3,6 +3,8 @@ export const state = () => ({
   token: localStorage.getItem('token') || '',
   user: {},
 
+  used_free: localStorage.getItem('used_free') || true,
+  show_plan_change_alert: false,
   github_token: localStorage.getItem('github_token') || '',
   github_repository: localStorage.getItem('github_repository') || ''
 })
@@ -11,10 +13,11 @@ export const mutations = {
   auth_request(state) {
     state.status = 'loading'
   },
-  auth_success(state, token, user) {
+  auth_success(state, user) {
     state.status = 'success'
-    state.token = token
+    state.token = user.token
     state.user = user
+    state.used_free = user.used_free
   },
   auth_error(state) {
     state.status = 'error'
@@ -23,7 +26,14 @@ export const mutations = {
     state.status = ''
     state.token = ''
   },
-
+  change_plan_success(state, user) {
+    console.log(user)
+    state.used_free = user.used_free
+    state.show_plan_change_alert = true
+  },
+  clear_plan_change_alert(state){
+    state.show_plan_change_alert = false
+  },
   setting_success(state, setting) {
     console.log(setting)
     state.github_token = setting.github_token
@@ -43,9 +53,11 @@ export const actions = {
       this.$axios({ url: 'users/sign_in', data: user, method: 'POST' })
         .then(resp => {
           const token = resp.headers.authorization
-          const user = resp.data
+          let user = resp.data
+          user.token = token
           localStorage.setItem('token', token)
-          commit('auth_success', token, user)
+          localStorage.setItem('used_free', user.used_free)
+          commit('auth_success', user)
           resolve(resp)
         })
         .catch(err => {
@@ -55,16 +67,35 @@ export const actions = {
         })
     })
   },
-  logout({ commit }) {
+  clearPlanChangeAlert({ commit }) {
     return new Promise((resolve, reject) => {
-      commit('logout')
-      localStorage.removeItem('token')
-      localStorage.removeItem('github_token')
-      localStorage.removeItem('github_repository')
+      commit('clear_plan_change_alert')
       resolve()
     })
   },
+  logout({ commit }) {
+    return new Promise((resolve, reject) => {
+      commit('logout')
+      localStorage.clear()
+      resolve()
+    })
+  },
+  changePlan({ commit }){
+    return new Promise((resolve, reject) => {
 
+      this.$axios({ url: 'change_plan', method: 'POST' })
+        .then(resp => {
+          console.log(resp.data)
+          localStorage.setItem('used_free', resp.data.used_free)
+          commit('change_plan_success', resp.data)
+          resolve(resp)
+        })
+        .catch(err => {
+          localStorage.removeItem('used_free')
+          reject(err)
+        })
+    })
+  },
   saveSetting({ commit }, setting) {
     return new Promise((resolve, reject) => {
       let url = 'project_setting'
@@ -109,6 +140,8 @@ export const actions = {
 export const getters = {
   isLoggedIn: state => !!state.token,
   authStatus: state => state.status,
+  used_free: state => !!state.used_free,
+  show_plan_change_alert: state => state.show_plan_change_alert,
 
   isExistGitHubToken: state => !!state.github_token,
   github_token: state => state.github_token,

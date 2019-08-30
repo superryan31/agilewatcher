@@ -21,6 +21,15 @@ export function SettingRules() {
     githubAuthorizeTokenRules: githubAuthorizeTokenRules
   };
 }
+/* Validation Rules For Payment Form */
+export function PaymentRules() {
+  return {
+    cardNoRules: cardNoRules,
+    expireMonthRules: expireMonthRules,
+    expireYearRules: expireYearRules,
+    cvvcodeRules: cvvcodeRules,
+  };
+}
 
 let emailRules = [v => !!v || "Email is required",
  v => {
@@ -41,4 +50,17 @@ let githubUrlRules = [
 
 let githubAuthorizeTokenRules = [
   v => !!v || "GitHub authorize token is required"
+]
+
+let cardNoRules = [
+  v => !!v || "Card No is Required"
+]
+let expireMonthRules = [
+  v => !!v || "Required"
+]
+let expireYearRules = [
+  v => !!v || "Required"
+]
+let cvvcodeRules = [
+  v => !!v || "Required"
 ]
