@@ -15,7 +15,7 @@
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/vuetify": "^1.0.0",
     "chart.js": "^2.8.0",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.15.8",
     "nuxt-material-design-icons": "^1.0.4",
     "oauthio-web": "^0.6.2",
     "vue-authenticate": "^1.4.1",
